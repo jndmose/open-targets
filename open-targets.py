@@ -7,7 +7,7 @@ import statistics
 import time
 from operator import itemgetter
 from multiprocessing import Pool
-from deco import concurrent, synchronized
+#from deco import concurrent, synchronized
 
 # Make an empty list to store the values from json files
 eva_list = []
@@ -20,6 +20,7 @@ value_list = []
 
 def import_targets_data():
     start_time = time.time()
+    # List all the files with etension .json from the folder
     target_files = glob.glob("targets/*.json")
     for jsonFile in target_files:
         with open(jsonFile) as f:
@@ -33,6 +34,7 @@ def import_targets_data():
 
 def import_diseases():
     start_time = time.time()
+    # List all the files with etension .json from the folder
     disease_files = glob.glob("diseases/*.json")
     for jsonFile in disease_files:
         with open(jsonFile) as f:
@@ -46,7 +48,7 @@ def import_diseases():
 def import_eva_data():
     print("Started importing Eva data")
     # List all the files with etension .json from the folder
-    eva_files = glob.glob("part*.json")
+    eva_files = glob.glob("eva-evidence/*.json")
     start_time = time.time()
     for jsonFile in eva_files:
         with open(jsonFile) as f:
@@ -60,7 +62,7 @@ def import_eva_data():
 
 def loop_eva_data():
     print("Looping over eva data now")
-    #Checking timeit takes in seconds -- Quite high for now almost 1 hr
+    # Checking timeit takes in seconds -- Quite high for now almost 1 hr
     start_time = time.time()
     # Loop through our eva_list using for loop
     for eva_unique in eva_list:
@@ -106,7 +108,7 @@ def join_on_targets():
             if search == target["id"]:
                 targets_dict["approvedSymbol"] = target["approvedSymbol"]
                 eva_new_list[index].update(targets_dict)
-                #print(eva_new_list[index])
+                # print(eva_new_list[index])
                 break
 
 
@@ -130,7 +132,7 @@ def sort_eva_list(list_to_sort):
 def count_targets_pair(unmodified_list):
     print("Started the target target pairs")
     start_time = time.time()
-    #Extract targetId and diseaseId, we are just interested in those
+    # Extract targetId and diseaseId, we are just interested in those
     modified_list = []
     count = 0
     for value in unmodified_list:
@@ -142,7 +144,7 @@ def count_targets_pair(unmodified_list):
     # Start finding target-target pairs connected to atleast 2 diseases, we want a combination of (AC,BC,AD,BD) target disease pair
     for index, target_disease in enumerate(modified_list):
 
-        #Start with AC
+        # Start with AC
         targetA = target_disease[0]
         diseaseC = target_disease[1]
         targetB = search_BC(modified_list, targetA, diseaseC)
@@ -150,7 +152,7 @@ def count_targets_pair(unmodified_list):
         if targetB != None:
 
             diseaseD = search_AD(modified_list, targetA, diseaseC)
-            #if BC found, find AD
+            # if BC found, find AD
             if diseaseD != None:
 
                 pair_target = search_BD(modified_list, targetB, diseaseD)
@@ -163,6 +165,8 @@ def count_targets_pair(unmodified_list):
           (time.time() - start_time))
     return count
 
+# Search BC with an early return
+
 
 def search_BC(modified_list, targetA, diseaseC):
     for td_list in modified_list:
@@ -171,6 +175,8 @@ def search_BC(modified_list, targetA, diseaseC):
             if diseaseC == td_list[1] and targetB != targetA:
                 return targetB
     return
+
+# Search AD with an early return
 
 
 def search_AD(modified_list, targetA, diseaseC):
@@ -181,6 +187,8 @@ def search_AD(modified_list, targetA, diseaseC):
                 return diseaseD
     return
 
+# Search BD with an early return
+
 
 def search_BD(modified_list, targetB, diseaseD):
     for td_list in modified_list:
@@ -188,6 +196,18 @@ def search_BD(modified_list, targetB, diseaseD):
             if td_list[0] == targetB and td_list[1] == diseaseD:
                 return True
     return
+
+
+def store_to_json(sorted_list):
+    print("Started exporting to json")
+    start_time = time.time()
+    with open("evadata.json", "w") as final:
+        for our_dict in sorted_list:
+            json.dump(our_dict, final)
+            final.write('\n')
+
+    print("--- %s seconds --- for exporting to json" %
+          (time.time() - start_time))
 
 
 if __name__ == "__main__":
@@ -201,5 +221,6 @@ if __name__ == "__main__":
     join_on_targets()
     join_on_diseases()
     sorted_list_of_dict = sort_eva_list(eva_new_list)
-    target_target_pairs = count_targets_pair(eva_unmodified_list[1:10000])
+    store_to_json(sorted_list_of_dict)
+    target_target_pairs = count_targets_pair(eva_unmodified_list)
     print("Target target pairs are ", target_target_pairs)
