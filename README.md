@@ -33,7 +33,7 @@ Started the target target pairs
 ‘approvedSymbol’, ‘name’. is the file **evadata.json** .
 
 The number of target-target pairs that share a connection to at least two diseases for the first 5 files from eva-evidence folder is 6947.
-However running with the whole data set , my script never finishes. Could be an edge case am ot considering or my machine power is not good enough to run this. 
+However running with the whole data set , my script never finishes. Could be an edge case am not considering or my machine power is not good enough to run this. 
 
 
 ##  Improvements
