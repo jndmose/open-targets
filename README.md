@@ -29,6 +29,7 @@ Started exporting to json
 Started the target target pairs
  --- 420962.90032172203 seconds --- for counting target-target pairs
 Target target pairs are  490903
+...
 
 
 -- The output file with ‘targetId’, ‘diseaseId’, ‘median’, ‘top3’,
