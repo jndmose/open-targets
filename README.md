@@ -29,14 +29,14 @@ Started exporting to json
 Started the target target pairs
  --- 420962.90032172203 seconds --- for counting target-target pairs
 Target target pairs are  490903
-...
+```
 
 
 -- The output file with ‘targetId’, ‘diseaseId’, ‘median’, ‘top3’,
 ‘approvedSymbol’, ‘name’. is the file **evadata.json** .
 
-The number of target-target pairs that share a connection to at least two diseases for the first 5 files from eva-evidence folder is 6947.
-However running with the whole data set , my script never finishes. Could be an edge case am not considering or my machine power is not good enough to run this. 
+The number of target-target pairs that share a connection to at least two diseases is 490903.
+However running with the whole data set , my script takes almost 5 days to finish. Could be an edge case am not considering or my machine power is not good enough to run this. 
 
 
 ##  Improvements
